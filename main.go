@@ -39,7 +39,12 @@ func main() {
 		Wait()
 
 		// Send Scroll Lock key press
-        err := rnr.Run("powershell", "-Command", "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.SendKeys]::SendWait('%{SCROLLLOCK}')")
+		loadAssembly := "[System.Reflection.Assembly]::" +
+			"LoadWithPartialName('System.Windows.Forms'); "
+		sendKey := "[System.Windows.Forms.SendKeys]::SendWait('%{SCROLLLOCK}')"
+		cmd := loadAssembly + sendKey
+
+		err := rnr.Run("powershell", "-Command", cmd)
         if err != nil {
             log.Printf("Error sending Scroll Lock: %v\n", err)
         }

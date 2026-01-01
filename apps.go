@@ -34,7 +34,9 @@ func LoadTxtFile() {
 func OpenApps(rnr *cmdio.Runner) {
     for _, appDir := range appDirs {
         // Extract app name from path
-        appName := strings.TrimSuffix(strings.Split(appDir, "\\")[len(strings.Split(appDir, "\\"))-1], ".exe")
+		parts := strings.Split(appDir, "\\")
+		fileName := parts[len(parts)-1]
+		appName := strings.TrimSuffix(fileName, ".exe")
         
         // Check if process is running
         cmd := exec.Command("tasklist", "/FI", "IMAGENAME eq "+appName+".exe")
@@ -57,7 +59,9 @@ func OpenApps(rnr *cmdio.Runner) {
 
 // func CloseApps(rnr *cmdio.Runner) {
 // 	for _, appDir := range appDirs {
-// 		err := rnr.Run("powershell", "-Command", "Stop-Process -Name '"+appDir+"' -ErrorAction SilentlyContinue")
+// 		err := rnr.Run("powershell", 
+// 			"-Command", 
+// 			"Stop-Process -Name '"+appDir+"' -ErrorAction SilentlyContinue")
 // 		if err != nil {
 // 			log.Printf("Error closing app %s: %v\n", appDir, err)
 // 		}
