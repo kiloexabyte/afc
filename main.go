@@ -2,13 +2,13 @@ package main
 
 import (
 	"log"
-	"math/rand"
 	"time"
 
 	"lesiw.io/cmdio/sys"
 )
 
 func main() {
+	LoadTxtFile()
 	var rnr = sys.Runner().WithEnv(map[string]string{
 		"PKGNAME":     "cmdio",
 		"CGO_ENABLED": "0",
@@ -27,22 +27,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for {
-		// Random duration between 30 to 100 seconds
-		randomSeconds := rand.Intn(71) + 30 // 0-70 + 30 = 30-100
-		time.Sleep(time.Duration(randomSeconds) * time.Second)
+	// Check current time in Central US
+	centralTime := time.Now().In(loc)
+	itsFiveOrLater := centralTime.Hour() >= 17
 
-		// Check if current time in Central US is 5 PM
-		centralTime := time.Now().In(loc)
-		if centralTime.Hour() == 17 {
-			log.Println("It's 5 PM Central Time. Exiting program.")
-			return
-		}
+	if !itsFiveOrLater {
+		OpenApps(rnr)
+	} 
+
+	for {
+		Wait()
 
 		// Send Scroll Lock key press
-		err := rnr.Run("powershell", "-Command", "[System.Windows.Forms.SendKeys]::SendWait('%{SCROLLLOCK}')")
-		if err != nil {
-			log.Printf("Error sending Scroll Lock: %v\n", err)
-		}
+        err := rnr.Run("powershell", "-Command", "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.SendKeys]::SendWait('%{SCROLLLOCK}')")
+        if err != nil {
+            log.Printf("Error sending Scroll Lock: %v\n", err)
+        }
 	}
 }
