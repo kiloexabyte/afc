@@ -36,6 +36,10 @@ func main() {
 	} 
 
 	for {
+		if itsFiveOrLater {
+			break
+		} 
+		
 		Wait()
 
 		// Send Scroll Lock key press
